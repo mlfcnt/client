@@ -13,4 +13,5 @@ export type Game = {
   players: Player[];
   creator: Player;
   grid: Grid;
+  status: "created" | "full";
 };

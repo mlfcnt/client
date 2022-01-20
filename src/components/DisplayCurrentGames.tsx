@@ -1,5 +1,5 @@
-import React from "react";
 import { Game, Player } from "../types";
+import { DisplayGame } from "./DisplayGame";
 type Props = {
   currentGames: Game[];
   onJoin: (game: Game) => void;
@@ -11,23 +11,36 @@ export const DisplayCurrentGames = ({ currentGames, onJoin }: Props) => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+      }}
+    >
       {currentGames.map((game) => (
         <div
           style={{
-            border: "2px solid black",
             margin: "30px",
             padding: "30px",
             backgroundColor: "lightcoral",
           }}
+          key={game.id}
         >
-          <p>Joueurs :</p>
-          <p>
-            {game.creator.name} {displayRole(game.creator)}
-          </p>
-          <p>{game.players[1]?.name || "En attente du 2eme joueur..."}</p>
-          {game.players.length < 2 && (
-            <button onClick={() => onJoin(game)}>Rejoindre cette partie</button>
+          {game.status === "created" ? (
+            <>
+              <p>
+                P1 : {game.creator.name} {displayRole(game.creator)}
+              </p>
+              <p>P2 : {game.players[1]?.name || "En attente..."}</p>
+              {game.players.length < 2 && (
+                <button onClick={() => onJoin(game)}>
+                  Rejoindre cette partie
+                </button>
+              )}
+            </>
+          ) : (
+            <DisplayGame game={game} />
           )}
         </div>
       ))}

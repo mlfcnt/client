@@ -1,17 +1,16 @@
-import { useEffect, useState } from "react";
-import { createNewGame } from "./api";
+import { useEffect } from "react";
 import "./App.css";
-import { GameRender } from "./components/GameRender";
-import { Game, Grid, Player } from "./types";
+import { Game } from "./types";
 import { io } from "socket.io-client";
 import { DisplayCurrentGames } from "./components/DisplayCurrentGames";
+import { useCurrentGames } from "./hooks/useCurrentGames";
 
 const socket = io("http://localhost:8000/", {
   transports: ["websocket"],
 });
 
 function App() {
-  const [currentGames, setCurrentGames] = useState<Game[]>([]);
+  const currentGames = useCurrentGames(socket);
 
   const handleNewGame = async () => {
     const name = window.prompt("Quel est votre nom ?");
@@ -25,19 +24,6 @@ function App() {
       game,
     });
   };
-
-  useEffect(() => {
-    socket.on("current-games", (socket) => {
-      setCurrentGames(socket);
-    });
-  }, []);
-
-  useEffect(() => {
-    socket.on("game-created", (socket) => {
-      setCurrentGames([...currentGames, socket]);
-      const { grid, players } = socket;
-    });
-  }, [currentGames]);
 
   return (
     <div className="App">
